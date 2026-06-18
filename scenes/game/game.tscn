@@ -1,0 +1,90 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/game_scene.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/office/office_controller.gd" id="2"]
+[ext_resource type="Script" path="res://scripts/systems/time_manager.gd" id="3"]
+[ext_resource type="Script" path="res://scripts/systems/power_manager.gd" id="4"]
+[ext_resource type="Script" path="res://scripts/systems/camera_system.gd" id="5"]
+
+[node name="Game" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(320, 180)
+
+[node name="Office" type="Node2D" parent="."]
+script = ExtResource("2")
+
+[node name="LeftView" type="Sprite2D" parent="Office"]
+position = Vector2(-640, 180)
+centered = false
+
+[node name="CenterView" type="Sprite2D" parent="Office"]
+position = Vector2(0, 0)
+centered = false
+
+[node name="RightView" type="Sprite2D" parent="Office"]
+position = Vector2(640, 0)
+centered = false
+
+[node name="LeftDoor" type="Node2D" parent="Office"]
+
+[node name="RightDoor" type="Node2D" parent="Office"]
+
+[node name="TimeManager" type="Node" parent="."]
+script = ExtResource("3")
+
+[node name="PowerManager" type="Node" parent="."]
+script = ExtResource("4")
+
+[node name="CameraSystem" type="Node" parent="."]
+script = ExtResource("5")
+
+[node name="ThreatA" type="Node" parent="."]
+
+[node name="ThreatB" type="Node" parent="."]
+
+[node name="HUD" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="TimeLabel" type="Label" parent="HUD"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -80.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 30.0
+horizontal_alignment = 2
+text = "1:00"
+
+[node name="PowerLabel" type="Label" parent="HUD"]
+offset_left = 8.0
+offset_top = 330.0
+offset_right = 80.0
+offset_bottom = 352.0
+text = "100%"
+
+[node name="PowerBar" type="ProgressBar" parent="HUD"]
+offset_left = 8.0
+offset_top = 344.0
+offset_right = 100.0
+offset_bottom = 354.0
+value = 100.0
+show_percentage = false
+
+[node name="Tablet" type="CanvasLayer" parent="."]
+layer = 20
+visible = false
+
+[node name="PauseOverlay" type="CanvasLayer" parent="."]
+layer = 30
+visible = false
+
+[node name="GameOverOverlay" type="CanvasLayer" parent="."]
+layer = 40
+visible = false
+
+[node name="VictoryOverlay" type="CanvasLayer" parent="."]
+layer = 40
+visible = false
