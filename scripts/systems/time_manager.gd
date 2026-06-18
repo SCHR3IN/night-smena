@@ -58,10 +58,12 @@ func get_progress() -> float:
 func _on_state_changed(new_state: StringName) -> void:
 	match new_state:
 		&"PlayingOffice":
-			if current_hour == 1 and _elapsed == 0.0:
+			if current_hour == config.start_hour and _elapsed == 0.0:
 				start_night()
 			_running = true
-		&"Paused", &"Dead", &"Win", &"MainMenu":
-			_running = false
+		&"TabletOpening", &"TabletOpen", &"TabletClosing":
+			_running = true  # Время идёт при открытом планшете
 		&"PowerOut":
 			_running = true  # Время идёт даже при отключении
+		&"Paused", &"Dead", &"Win", &"MainMenu":
+			_running = false

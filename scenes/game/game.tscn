@@ -1,10 +1,52 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=21 format=3]
 
 [ext_resource type="Script" path="res://scripts/game_scene.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/office/office_controller.gd" id="2"]
 [ext_resource type="Script" path="res://scripts/systems/time_manager.gd" id="3"]
 [ext_resource type="Script" path="res://scripts/systems/power_manager.gd" id="4"]
 [ext_resource type="Script" path="res://scripts/systems/camera_system.gd" id="5"]
+[ext_resource type="Script" path="res://scripts/ai/animatronic_ai.gd" id="6"]
+[ext_resource type="Texture2D" path="res://assets/sprites/office/office_center.png" id="10"]
+[ext_resource type="Texture2D" path="res://assets/sprites/office/office_left.png" id="11"]
+[ext_resource type="Texture2D" path="res://assets/sprites/office/office_right.png" id="12"]
+[ext_resource type="Texture2D" path="res://assets/sprites/office/office_left_door_closed.png" id="13"]
+[ext_resource type="Shader" path="res://shaders/crt_effect.gdshader" id="14"]
+[ext_resource type="Texture2D" path="res://assets/sprites/animatronics/threat_a_corridor.png" id="20"]
+[ext_resource type="Texture2D" path="res://assets/sprites/animatronics/threat_b_corridor.png" id="21"]
+[ext_resource type="Texture2D" path="res://assets/sprites/animatronics/screamer_a.png" id="22"]
+[ext_resource type="Texture2D" path="res://assets/sprites/animatronics/screamer_b.png" id="23"]
+
+[sub_resource type="ShaderMaterial" id="CRTMaterial"]
+shader = ExtResource("14")
+shader_parameter/scan_line_amount = 0.3
+shader_parameter/noise_amount = 0.15
+shader_parameter/distortion = 0.003
+shader_parameter/roll_speed = 0.5
+shader_parameter/flicker = 0.02
+shader_parameter/vignette_intensity = 0.4
+shader_parameter/tint_color = Color(0.7, 0.9, 0.7, 1)
+
+[sub_resource type="LabelSettings" id="TimeLabel"]
+font_size = 24
+font_color = Color(1, 1, 1, 0.9)
+shadow_color = Color(0, 0, 0, 0.7)
+shadow_offset = Vector2(1, 1)
+
+[sub_resource type="LabelSettings" id="PowerLabel"]
+font_size = 18
+font_color = Color(0.6, 0.9, 0.6, 1)
+shadow_color = Color(0, 0, 0, 0.5)
+shadow_offset = Vector2(1, 1)
+
+[sub_resource type="LabelSettings" id="HintLabel"]
+font_size = 10
+font_color = Color(0.7, 0.8, 0.7, 0.8)
+
+[sub_resource type="LabelSettings" id="OverlayTitle"]
+font_size = 28
+font_color = Color(1, 1, 1, 1)
+shadow_color = Color(0, 0, 0, 0.8)
+shadow_offset = Vector2(2, 2)
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1")
@@ -16,20 +58,39 @@ position = Vector2(320, 180)
 script = ExtResource("2")
 
 [node name="LeftView" type="Sprite2D" parent="Office"]
-position = Vector2(-640, 180)
-centered = false
+position = Vector2(-320, 180)
+texture = ExtResource("11")
 
 [node name="CenterView" type="Sprite2D" parent="Office"]
-position = Vector2(0, 0)
-centered = false
+position = Vector2(320, 180)
+texture = ExtResource("10")
 
 [node name="RightView" type="Sprite2D" parent="Office"]
-position = Vector2(640, 0)
-centered = false
+position = Vector2(960, 180)
+texture = ExtResource("12")
 
-[node name="LeftDoor" type="Node2D" parent="Office"]
+[node name="LeftDoorClosed" type="Sprite2D" parent="Office"]
+visible = false
+position = Vector2(-320, 180)
+texture = ExtResource("13")
 
-[node name="RightDoor" type="Node2D" parent="Office"]
+[node name="RightDoorClosed" type="Sprite2D" parent="Office"]
+visible = false
+position = Vector2(960, 180)
+texture = ExtResource("13")
+flip_h = true
+
+[node name="LeftLight" type="Sprite2D" parent="Office"]
+visible = false
+position = Vector2(-320, 180)
+texture = ExtResource("20")
+modulate = Color(1, 1, 1, 0.9)
+
+[node name="RightLight" type="Sprite2D" parent="Office"]
+visible = false
+position = Vector2(960, 180)
+texture = ExtResource("21")
+modulate = Color(1, 1, 1, 0.9)
 
 [node name="TimeManager" type="Node" parent="."]
 script = ExtResource("3")
@@ -41,8 +102,10 @@ script = ExtResource("4")
 script = ExtResource("5")
 
 [node name="ThreatA" type="Node" parent="."]
+script = ExtResource("6")
 
 [node name="ThreatB" type="Node" parent="."]
+script = ExtResource("6")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 layer = 10
@@ -51,40 +114,371 @@ layer = 10
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -80.0
+offset_left = -90.0
 offset_top = 8.0
 offset_right = -8.0
-offset_bottom = 30.0
+offset_bottom = 36.0
 horizontal_alignment = 2
 text = "1:00"
+label_settings = SubResource("TimeLabel")
 
 [node name="PowerLabel" type="Label" parent="HUD"]
 offset_left = 8.0
-offset_top = 330.0
+offset_top = 316.0
 offset_right = 80.0
-offset_bottom = 352.0
+offset_bottom = 340.0
 text = "100%"
+label_settings = SubResource("PowerLabel")
 
 [node name="PowerBar" type="ProgressBar" parent="HUD"]
 offset_left = 8.0
-offset_top = 344.0
-offset_right = 100.0
-offset_bottom = 354.0
+offset_top = 340.0
+offset_right = 120.0
+offset_bottom = 352.0
 value = 100.0
 show_percentage = false
 
-[node name="Tablet" type="CanvasLayer" parent="."]
+[node name="HintLabel" type="Label" parent="HUD"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -300.0
+offset_top = -24.0
+offset_right = 300.0
+horizontal_alignment = 1
+text = ""
+label_settings = SubResource("HintLabel")
+
+[node name="DoorStatusLeft" type="Label" parent="HUD"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 150.0
+offset_bottom = 24.0
+text = "[Q] Лев.дверь: ОТКР"
+label_settings = SubResource("HintLabel")
+
+[node name="DoorStatusRight" type="Label" parent="HUD"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -160.0
+offset_top = 36.0
+offset_right = -8.0
+offset_bottom = 52.0
+horizontal_alignment = 2
+text = "[E] Прав.дверь: ОТКР"
+label_settings = SubResource("HintLabel")
+
+[node name="TabletLayer" type="CanvasLayer" parent="."]
 layer = 20
-visible = false
 
-[node name="PauseOverlay" type="CanvasLayer" parent="."]
+[node name="TabletPanel" type="Control" parent="TabletLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TabletBg" type="ColorRect" parent="TabletLayer/TabletPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.02, 0.04, 0.06, 0.95)
+
+[node name="CamDisplay" type="TextureRect" parent="TabletLayer/TabletPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -135.0
+offset_right = 240.0
+offset_bottom = 115.0
+stretch_mode = 5
+material = SubResource("CRTMaterial")
+
+[node name="CamAnimOverlay" type="TextureRect" parent="TabletLayer/TabletPanel"]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -135.0
+offset_right = 240.0
+offset_bottom = 115.0
+stretch_mode = 5
+modulate = Color(1, 1, 1, 0.85)
+material = SubResource("CRTMaterial")
+
+[node name="CamNameLabel" type="Label" parent="TabletLayer/TabletPanel"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -40.0
+offset_right = 150.0
+offset_bottom = -20.0
+horizontal_alignment = 1
+text = "CAM 01 — Приёмная"
+
+[node name="CamButtons" type="HBoxContainer" parent="TabletLayer/TabletPanel"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -210.0
+offset_top = -18.0
+offset_right = 210.0
+
+[node name="Cam1" type="Button" parent="TabletLayer/TabletPanel/CamButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "1"
+
+[node name="Cam2" type="Button" parent="TabletLayer/TabletPanel/CamButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "2"
+
+[node name="Cam3" type="Button" parent="TabletLayer/TabletPanel/CamButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "3"
+
+[node name="Cam4" type="Button" parent="TabletLayer/TabletPanel/CamButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "4"
+
+[node name="Cam5" type="Button" parent="TabletLayer/TabletPanel/CamButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "5"
+
+[node name="Cam6" type="Button" parent="TabletLayer/TabletPanel/CamButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "6"
+
+[node name="Cam7" type="Button" parent="TabletLayer/TabletPanel/CamButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "7"
+
+[node name="CloseTabletBtn" type="Button" parent="TabletLayer/TabletPanel"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -50.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 32.0
+text = "[T] ✕"
+
+[node name="ScreamerLayer" type="CanvasLayer" parent="."]
+layer = 25
+
+[node name="ScreamerSprite" type="TextureRect" parent="ScreamerLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+stretch_mode = 5
+
+[node name="OverlayLayer" type="CanvasLayer" parent="."]
 layer = 30
-visible = false
 
-[node name="GameOverOverlay" type="CanvasLayer" parent="."]
-layer = 40
+[node name="GameOverPanel" type="Control" parent="OverlayLayer"]
 visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 
-[node name="VictoryOverlay" type="CanvasLayer" parent="."]
-layer = 40
+[node name="Bg" type="ColorRect" parent="OverlayLayer/GameOverPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.3, 0.02, 0.02, 0.9)
+
+[node name="Title" type="Label" parent="OverlayLayer/GameOverPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -40.0
+offset_right = 150.0
+offset_bottom = 0.0
+horizontal_alignment = 1
+text = "СМЕНА ПРОВАЛЕНА"
+label_settings = SubResource("OverlayTitle")
+
+[node name="RetryBtn" type="Button" parent="OverlayLayer/GameOverPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -60.0
+offset_top = 20.0
+offset_right = 60.0
+offset_bottom = 46.0
+text = "ЗАНОВО"
+
+[node name="MenuBtn" type="Button" parent="OverlayLayer/GameOverPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -60.0
+offset_top = 52.0
+offset_right = 60.0
+offset_bottom = 78.0
+text = "МЕНЮ"
+
+[node name="VictoryPanel" type="Control" parent="OverlayLayer"]
 visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Bg" type="ColorRect" parent="OverlayLayer/VictoryPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.02, 0.12, 0.08, 0.9)
+
+[node name="Title" type="Label" parent="OverlayLayer/VictoryPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -40.0
+offset_right = 150.0
+offset_bottom = 0.0
+horizontal_alignment = 1
+text = "СМЕНА ОКОНЧЕНА"
+label_settings = SubResource("OverlayTitle")
+
+[node name="TimeText" type="Label" parent="OverlayLayer/VictoryPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = 5.0
+offset_right = 100.0
+offset_bottom = 25.0
+horizontal_alignment = 1
+text = "6:00"
+
+[node name="MenuBtn" type="Button" parent="OverlayLayer/VictoryPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -60.0
+offset_top = 35.0
+offset_right = 60.0
+offset_bottom = 61.0
+text = "МЕНЮ"
+
+[node name="PausePanel" type="Control" parent="OverlayLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Bg" type="ColorRect" parent="OverlayLayer/PausePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.05, 0.05, 0.1, 0.85)
+
+[node name="Title" type="Label" parent="OverlayLayer/PausePanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -50.0
+offset_right = 100.0
+offset_bottom = -20.0
+horizontal_alignment = 1
+text = "ПАУЗА"
+label_settings = SubResource("OverlayTitle")
+
+[node name="ResumeBtn" type="Button" parent="OverlayLayer/PausePanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -60.0
+offset_top = -10.0
+offset_right = 60.0
+offset_bottom = 16.0
+text = "ПРОДОЛЖИТЬ"
+
+[node name="MenuBtn" type="Button" parent="OverlayLayer/PausePanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -60.0
+offset_top = 24.0
+offset_right = 60.0
+offset_bottom = 50.0
+text = "В МЕНЮ"
+
+[connection signal="pressed" from="TabletLayer/TabletPanel/CamButtons/Cam1" to="." method="_switch_camera" binds= [1]]
+[connection signal="pressed" from="TabletLayer/TabletPanel/CamButtons/Cam2" to="." method="_switch_camera" binds= [2]]
+[connection signal="pressed" from="TabletLayer/TabletPanel/CamButtons/Cam3" to="." method="_switch_camera" binds= [3]]
+[connection signal="pressed" from="TabletLayer/TabletPanel/CamButtons/Cam4" to="." method="_switch_camera" binds= [4]]
+[connection signal="pressed" from="TabletLayer/TabletPanel/CamButtons/Cam5" to="." method="_switch_camera" binds= [5]]
+[connection signal="pressed" from="TabletLayer/TabletPanel/CamButtons/Cam6" to="." method="_switch_camera" binds= [6]]
+[connection signal="pressed" from="TabletLayer/TabletPanel/CamButtons/Cam7" to="." method="_switch_camera" binds= [7]]
+[connection signal="pressed" from="TabletLayer/TabletPanel/CloseTabletBtn" to="." method="_toggle_tablet"]
+[connection signal="pressed" from="OverlayLayer/GameOverPanel/RetryBtn" to="." method="_on_retry_pressed"]
+[connection signal="pressed" from="OverlayLayer/GameOverPanel/MenuBtn" to="." method="_on_menu_pressed"]
+[connection signal="pressed" from="OverlayLayer/VictoryPanel/MenuBtn" to="." method="_on_menu_pressed"]
+[connection signal="pressed" from="OverlayLayer/PausePanel/ResumeBtn" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="OverlayLayer/PausePanel/MenuBtn" to="." method="_on_menu_pressed"]

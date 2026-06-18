@@ -46,15 +46,15 @@ func toggle() -> void:
 	_update_visuals()
 
 	# Simple tween for animation feel
-	var tween := create_tween()
+	var anim_tween := create_tween()
 	if is_closed and door_closed_sprite:
 		door_closed_sprite.modulate.a = 0.0
-		tween.tween_property(door_closed_sprite, "modulate:a", 1.0, duration)
+		anim_tween.tween_property(door_closed_sprite, "modulate:a", 1.0, duration)
 	elif not is_closed and door_open_sprite:
 		door_open_sprite.modulate.a = 0.0
-		tween.tween_property(door_open_sprite, "modulate:a", 1.0, duration)
+		anim_tween.tween_property(door_open_sprite, "modulate:a", 1.0, duration)
 
-	await tween.finished
+	await anim_tween.finished
 	_animating = false
 
 

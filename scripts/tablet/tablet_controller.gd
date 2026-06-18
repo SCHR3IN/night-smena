@@ -36,12 +36,12 @@ func open_tablet() -> void:
 	visible = true
 	if tablet_panel:
 		tablet_panel.modulate.a = 0.0
-		var tween := create_tween()
-		tween.set_ease(Tween.EASE_OUT)
-		tween.set_trans(Tween.TRANS_CUBIC)
-		tween.tween_property(tablet_panel, "modulate:a", 1.0, open_duration)
-		tween.tween_property(tablet_panel, "position:y", 0.0, open_duration).from(60.0)
-		await tween.finished
+		var anim_tween := create_tween()
+		anim_tween.set_ease(Tween.EASE_OUT)
+		anim_tween.set_trans(Tween.TRANS_CUBIC)
+		anim_tween.tween_property(tablet_panel, "modulate:a", 1.0, open_duration)
+		anim_tween.tween_property(tablet_panel, "position:y", 0.0, open_duration).from(60.0)
+		await anim_tween.finished
 
 	is_open = true
 	_animating = false
@@ -56,12 +56,12 @@ func close_tablet() -> void:
 	GameManager.close_tablet()
 
 	if tablet_panel:
-		var tween := create_tween()
-		tween.set_ease(Tween.EASE_IN)
-		tween.set_trans(Tween.TRANS_CUBIC)
-		tween.tween_property(tablet_panel, "modulate:a", 0.0, close_duration)
-		tween.tween_property(tablet_panel, "position:y", 60.0, close_duration)
-		await tween.finished
+		var anim_tween := create_tween()
+		anim_tween.set_ease(Tween.EASE_IN)
+		anim_tween.set_trans(Tween.TRANS_CUBIC)
+		anim_tween.tween_property(tablet_panel, "modulate:a", 0.0, close_duration)
+		anim_tween.tween_property(tablet_panel, "position:y", 60.0, close_duration)
+		await anim_tween.finished
 
 	visible = false
 	is_open = false

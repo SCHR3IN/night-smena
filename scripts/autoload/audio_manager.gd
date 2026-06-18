@@ -49,22 +49,22 @@ func play_music(stream: AudioStream, fade_in: float = 1.0) -> void:
 	if not stream:
 		return
 	if _music_player.playing:
-		var tween := create_tween()
-		tween.tween_property(_music_player, "volume_db", -40.0, 0.5)
-		await tween.finished
+		var audio_tween := create_tween()
+		audio_tween.tween_property(_music_player, "volume_db", -40.0, 0.5)
+		await audio_tween.finished
 	_music_player.stream = stream
 	_music_player.volume_db = -40.0
 	_music_player.play()
-	var tween := create_tween()
-	tween.tween_property(_music_player, "volume_db", -6.0, fade_in)
+	var fade_tween := create_tween()
+	fade_tween.tween_property(_music_player, "volume_db", -6.0, fade_in)
 
 
 func stop_music(fade_out: float = 1.0) -> void:
 	if not _music_player.playing:
 		return
-	var tween := create_tween()
-	tween.tween_property(_music_player, "volume_db", -40.0, fade_out)
-	await tween.finished
+	var audio_tween := create_tween()
+	audio_tween.tween_property(_music_player, "volume_db", -40.0, fade_out)
+	await audio_tween.finished
 	_music_player.stop()
 
 

@@ -15,9 +15,9 @@ func _ready() -> void:
 
 	# Animate title
 	if title_label:
-		var tween := create_tween().set_loops()
-		tween.tween_property(title_label, "modulate:a", 0.7, 2.0)
-		tween.tween_property(title_label, "modulate:a", 1.0, 2.0)
+		var title_tween := create_tween().set_loops()
+		title_tween.tween_property(title_label, "modulate:a", 0.7, 2.0)
+		title_tween.tween_property(title_label, "modulate:a", 1.0, 2.0)
 
 
 func _on_start() -> void:

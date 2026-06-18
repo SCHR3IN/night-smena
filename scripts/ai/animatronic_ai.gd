@@ -12,7 +12,7 @@ signal retreated(animatronic_id: String, room_id: String)
 @export var door_side: String = "left"  # Which door this threat targets
 
 ## Route override: if set, follows these rooms in order
-@export var route: Array[String] = []
+@export var route: Array = []
 
 var current_room: String = "service"
 var _graph: RoomGraph
@@ -79,7 +79,7 @@ func _try_move() -> void:
 	# Follow route if defined
 	if route.size() > 0:
 		if _route_index < route.size():
-			var next_room := route[_route_index]
+			var next_room: String = route[_route_index]
 			_move_to(next_room)
 			_route_index += 1
 		return
@@ -99,7 +99,6 @@ func _move_to(room_id: String) -> void:
 	moved.emit(animatronic_id, room_id)
 
 	# Check if at door
-	var room_node := _graph.get_room(room_id)
 	if room_id == "left_corridor" and door_side == "left":
 		_at_door = true
 		at_door.emit(animatronic_id, door_side)
